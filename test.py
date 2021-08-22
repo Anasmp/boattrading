@@ -3,27 +3,42 @@ from flask import Flask
 app = Flask(__name__)
 import os
 
-
 logging.basicConfig(level=logging.DEBUG)
-# os.system("python3 zerodaAccess.py")
+
 
 import sqlite3
 conn = sqlite3.connect('data.db')
-query = "SELECT TOKEN from Stocks WHERE ID=(SELECT max(ID) FROM Stocks)"
-with conn:
-    cursor = conn.execute(query);
-    for row in cursor:
-        print ("ID = ", row[0])
-conn.close()
+from kiteconnect import KiteConnect
+kite = KiteConnect(api_key="yqw13acxnjzycwri")
 
-# from kiteconnect import KiteConnect
-# kite = KiteConnect(api_key="yqw13acxnjzycwri")
 
-# data = kite.generate_session(str(row[0]), api_secret="32f9wfuwq8dzlyyc6pt7dtpzex0a0836")
-# kite.set_access_token(data["access_token"])
+
+def regenerateKey(typeme):
+    if typeme == 'new':
+        os.system("python3 zerodaAccess.py")
+    query = "SELECT TOKEN from Stocks WHERE ID=(SELECT max(ID) FROM Stocks)"
+    with conn:
+        cursor = conn.execute(query);
+        for row in cursor:
+            print ("ID = ", row[0])
+    conn.close()
+    
+    data = kite.generate_session(str(row[0]), api_secret="32f9wfuwq8dzlyyc6pt7dtpzex0a0836")
+    kite.set_access_token(data["access_token"])
+    print(row[0])
+    
+
+
+    
+
+regenerateKey(typeme='new')
+
+
+
 
 @app.route('/')
 def hello_world():
+    
     # try:
     #     order_id = kite.place_order(tradingsymbol="NIFTY 50",
     #                                 exchange="NSE",
@@ -40,7 +55,7 @@ def hello_world():
     # except Exception as e:
     #     logging.info("Order placement failed: {}".format(e))
     
-    return row[0]
+    return 'succcess'
 
 # @app.route('/post')
 # def hello_world2():
@@ -64,6 +79,9 @@ def hello_world():
 
 logging.basicConfig(level=logging.DEBUG)
 
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
 
