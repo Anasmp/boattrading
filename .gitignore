@@ -1,0 +1,3 @@
+*.db
+data_file.csv
+nohup.out
